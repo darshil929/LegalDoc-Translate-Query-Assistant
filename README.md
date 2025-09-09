@@ -122,12 +122,12 @@ The application will be available at `http://localhost:5173/`.
 
 ## Usage Guide
 
-### 1️⃣ **Upload a Legal Case PDF** (Home Page)
+### 1. **Upload a Legal Case PDF** (Home Page)
 - Upload a document in any language.
 - The backend will **translate** it into English.
 - Translated content is **stored in Weaviate** for future retrieval.
 
-### 2️⃣ **Query the Legal Assistant** (Assistant Page)
+### 2. **Query the Legal Assistant** (Assistant Page)
 - Ask legal questions related to the case.
 - The assistant retrieves relevant **context from Weaviate**.
 - It generates answers **ONLY based on the provided case PDF**.
