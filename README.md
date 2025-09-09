@@ -5,7 +5,7 @@
 **LegalDoc-Translate-Query-Assistant** is a powerful AI-driven legal document processing tool designed to:
 
 - Translate legal case PDFs in any language to English.
-- Store translated content as embeddings in Pinecone.
+- Store translated content as embeddings in Weaviate.
 - Provide a **RAG-based LLM assistant** to answer legal queries using Groq's LLM.
 
 The application consists of:
@@ -17,7 +17,7 @@ The application consists of:
 ## Features
 
 **PDF Translation** - Convert any legal case document into English.
-**Vector Search with Pinecone** - Efficient retrieval of relevant legal information.
+**Vector Search with Weaviate** - Efficient retrieval of relevant legal information.
 **RAG-based LLM Assistant** - Provides evidence-based legal answers.
 **FastAPI Backend** - Scalable and efficient API services.
 **Frontend UI** - Built with React.js and Material UI for a smooth user experience.
@@ -28,9 +28,9 @@ The application consists of:
 
 | Component  | Technologies Used |
 |------------|------------------|
-| Backend    | FastAPI, PyTorch, MBart, Pinecone, SentenceTransformers, Groq LLM |
+| Backend    | FastAPI, PyTorch, MBart, Weaviate, SentenceTransformers, Groq LLM |
 | Frontend   | React.js, TypeScript, Material UI |
-| Database   | Pinecone Vector DB |
+| Database   | Weaviate Vector DB |
 
 ---
 
@@ -78,7 +78,7 @@ pip install torch torchvision torchaudio --index-url https://download.pytorch.or
 
 ### Step 3: Install Required Libraries
 ```bash
-pip install transformers fastapi uvicorn python-magic PyPDF2 sentence-transformers pinecone-client python-dotenv groq
+pip install transformers fastapi uvicorn python-magic PyPDF2 sentence-transformers weaviate-client python-dotenv groq
 ```
 
 ### Step 4: Install Additional Dependencies
@@ -122,14 +122,14 @@ The application will be available at `http://localhost:5173/`.
 
 ## Usage Guide
 
-### 1️. **Upload a Legal Case PDF** (Home Page)
+### 1️⃣ **Upload a Legal Case PDF** (Home Page)
 - Upload a document in any language.
 - The backend will **translate** it into English.
-- Translated content is **stored in Pinecone** for future retrieval.
+- Translated content is **stored in Weaviate** for future retrieval.
 
-### 2️. **Query the Legal Assistant** (Assistant Page)
+### 2️⃣ **Query the Legal Assistant** (Assistant Page)
 - Ask legal questions related to the case.
-- The assistant retrieves relevant **context from Pinecone**.
+- The assistant retrieves relevant **context from Weaviate**.
 - It generates answers **ONLY based on the provided case PDF**.
 
 ---
