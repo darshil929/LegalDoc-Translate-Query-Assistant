@@ -1,0 +1,71 @@
+version: '3.8'
+
+services:
+  weaviate:
+    image: semitechnologies/weaviate:1.24.1
+    container_name: legal_rag_weaviate
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+      - "50051:50051"
+    environment:
+      QUERY_DEFAULTS_LIMIT: 25
+      AUTHENTICATION_ANONYMOUS_ACCESS_ENABLED: 'true'
+      PERSISTENCE_DATA_PATH: '/var/lib/weaviate'
+      DEFAULT_VECTORIZER_MODULE: 'text2vec-transformers'
+      ENABLE_MODULES: 'text2vec-transformers'
+      TRANSFORMERS_INFERENCE_API: 'http://t2v-transformers:8080'
+      CLUSTER_HOSTNAME: 'weaviate_node'
+      AUTOSCHEMA_ENABLED: 'false'
+      LIMIT_RESOURCES: 'false'
+      DISABLE_TELEMETRY: 'true'
+      # Performance configuration
+      GOMEMLIMIT: '6GiB'
+      GOMAXPROCS: '4'
+      # Batch configuration for optimal import performance
+      BATCH_MAX_TIME_SECONDS: '10'
+      BATCH_MAX_SIZE: '200'
+    volumes:
+      - weaviate_data:/var/lib/weaviate
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/v1/.well-known/ready"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+    networks:
+      - legal_rag_network
+    depends_on:
+      - t2v-transformers
+    deploy:
+      resources:
+        limits:
+          memory: 6G
+        reservations:
+          memory: 4G
+
+  t2v-transformers:
+    image: semitechnologies/transformers-inference:sentence-transformers-all-MiniLM-L6-v2
+    container_name: legal_rag_transformers
+    restart: unless-stopped
+    environment:
+      ENABLE_CUDA: '0'  # Set to '1' for GPU support
+      NVIDIA_VISIBLE_DEVICES: 'all'  # For GPU support
+    ports:
+      - "8081:8080"  # Exposed on different port to avoid conflict
+    networks:
+      - legal_rag_network
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+        reservations:
+          memory: 1G
+
+volumes:
+  weaviate_data:
+    driver: local
+
+networks:
+  legal_rag_network:
+    driver: bridge
