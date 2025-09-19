@@ -189,12 +189,24 @@ class WeaviateManager:
             if response and "data" in response:
                 documents = response["data"]["Get"][self.collection_name]
                 for doc in documents:
+                    # Safely parse metadata JSON
+                    metadata = {}
+                    metadata_str = doc.get("metadata", "{}")
+                    if metadata_str:
+                        try:
+                            metadata = json.loads(metadata_str)
+                        except json.JSONDecodeError:
+                            logger.warning(
+                                f"Failed to parse metadata for document {doc.get('document_id', 'unknown')}"
+                            )
+                            metadata = {"raw": metadata_str}
+
                     results.append(
                         {
                             "text": doc.get("text", ""),
                             "chunk_index": doc.get("chunk_index", 0),
                             "document_id": doc.get("document_id", ""),
-                            "metadata": json.loads(doc.get("metadata", "{}")),
+                            "metadata": metadata,
                             "score": doc.get("_additional", {}).get("certainty", 0.0),
                             "distance": doc.get("_additional", {}).get("distance", 0.0),
                             "id": doc.get("_additional", {}).get("id", ""),
@@ -210,12 +222,12 @@ class WeaviateManager:
     def search_documents_with_vector(
         self, query_vector: List[float], limit: int = 10, certainty: float = 0.0
     ) -> List[Dict]:
-        """Legacy method for backward compatibility - converts to text search"""
+        """Legacy method - redirects to text search with a warning"""
         logger.warning(
-            "search_documents_with_vector called but using text search instead"
+            "search_documents_with_vector is deprecated with built-in vectorization"
         )
-        # This method is kept for backward compatibility but won't be used
-        # since we're using built-in vectorization
+        logger.warning("Cannot perform vector search directly - text search required")
+        # Return empty results since we can't convert vector back to text
         return []
 
     def update_document(self, document_id: str, properties: Dict) -> bool:
